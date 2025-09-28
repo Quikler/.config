@@ -31,10 +31,25 @@ return {
         --require 'lspconfig'.csharp_ls.setup(lspconfig)
         --require("csharpls_extended").buf_read_cmd_bind()
 
+        local path_utils = require("utils.path_utils")
+        local home_env
+        local appdata_local
+
+        if require("utils.os_utils").is_linux then
+            home_env = os.getenv("HOME")
+            appdata_local = home_env .. "/.local/share"
+        else
+            home_env = os.getenv("USERPROFILE")
+            appdata_local = os.getenv("LOCALAPPDATA")
+        end
+
         vim.lsp.config("roslyn", {
             cmd = {
                 "dotnet",
-                ("$HOME/.local/roslyn-linux-x64/Microsoft.CodeAnalysis.LanguageServer.dll"):gsub("%$(%w+)", os.getenv),
+                path_utils.path_join(appdata_local, 'roslyn-lsp', 'Microsoft.CodeAnalysis.LanguageServer.dll'),
+                --appdata_local .. "/roslyn-lsp/Microsoft.CodeAnalysis.LanguageServer.dll",
+                --("$HOME/.local/roslyn-lsp/Microsoft.CodeAnalysis.LanguageServer.dll"):gsub("%$(%w+)", os
+                --.getenv),
                 "--logLevel=Information",
                 "--extensionLogDirectory=" .. vim.fs.dirname(vim.lsp.get_log_path()),
                 "--stdio",
@@ -45,7 +60,7 @@ return {
         -- Avalonia
 
         vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-        --vim.api.nvim_create_autocmd('BufRead', {
+            --vim.api.nvim_create_autocmd('BufRead', {
             pattern = { "*.axaml" },
             callback = function(event)
                 vim.bo.filetype = 'xml'
