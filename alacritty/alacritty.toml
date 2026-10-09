@@ -7,3 +7,13 @@ size = 8.0
 
 [window]
 opacity = 0.75
+
+[[keyboard.bindings]]
+key = "K"
+mods = "Control"
+chars = "\u001b[A"
+
+[[keyboard.bindings]]
+key = "J"
+mods = "Control"
+chars = "\u001b[B"
